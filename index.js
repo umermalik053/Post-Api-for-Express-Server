@@ -15,6 +15,13 @@ app.get('/', (req, res) => {
 
     app.post('/', (req, res) => {
         const newProduct = req.body;
+        if (!newProduct.id || !newProduct.name || !newProduct.price || !newProduct.description|| !newProduct.category ) {
+            return res.status(400).send({status: 'Bad Request', message: 'Invalid product data'});
+        }
+        newProduct.id = Math.floor(Math.random() * 10000) + 1;  // Generate unique ID for each product
+        if(Product.some(product => product.id == newProduct.id)) {
+            return res.status(409).send({status: 'Conflict', message: 'Product ID already exists'});
+        }
         Product.push(newProduct);
         res.status(201).send({status: 'Created', message: 'New Product Added', data: Product});
     });
